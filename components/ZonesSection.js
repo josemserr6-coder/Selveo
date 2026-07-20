@@ -25,15 +25,18 @@ export default function ZonesSection() {
                   sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
                   className="object-cover transition-transform duration-[1400ms] ease-premium group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-charcoal/85 via-charcoal/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-charcoal/95 via-charcoal/55 to-charcoal/5" />
                 <div className="absolute inset-0 flex flex-col items-center justify-end text-center p-4 md:p-5">
-                  <h3 className="font-serif text-lg md:text-xl text-cream mb-2">
+                  <h3 className="font-serif text-lg md:text-xl text-cream mb-2.5">
                     {zone.name}
                   </h3>
-                  <p className="text-cream/70 text-xs leading-relaxed opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 ease-premium hidden md:block">
-                    {zone.description}
+                  <div className="w-8 h-px bg-gold mb-3 group-hover:w-14 transition-all duration-500 ease-premium" />
+                  <p className="text-[10px] tracking-widest2 uppercase text-gold-light/90 mb-1.5">
+                    Nos especializamos en
                   </p>
-                  <div className="w-8 h-px bg-gold mt-3 group-hover:w-14 transition-all duration-500 ease-premium" />
+                  <p className="text-cream/80 text-[11px] md:text-xs leading-relaxed">
+                    {zone.specialties.join(" · ")}
+                  </p>
                 </div>
               </div>
             </Reveal>
