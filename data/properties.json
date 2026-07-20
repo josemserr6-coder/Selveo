@@ -1,0 +1,103 @@
+[
+  {
+    "id": "1",
+    "slug": "penthouse-vista-panoramica-polanco",
+    "title": "Penthouse con vista panorámica en Polanco",
+    "zone": "CDMX",
+    "type": "venta",
+    "price": 18500000,
+    "currency": "MXN",
+    "bedrooms": 3,
+    "bathrooms": 3.5,
+    "area": 280,
+    "description": "Penthouse de lujo en el corazón de Polanco, con acabados de mármol, doble altura en la sala principal y terraza privada con vista a Chapultepec. Edificio con seguridad 24/7, valet parking, gimnasio y alberca en la azotea. Una pieza única para quienes buscan vivir la ciudad desde las alturas.",
+    "images": [
+      "https://picsum.photos/seed/selveo-polanco-1/1200/800",
+      "https://picsum.photos/seed/selveo-polanco-2/1200/800",
+      "https://picsum.photos/seed/selveo-polanco-3/1200/800",
+      "https://picsum.photos/seed/selveo-polanco-4/1200/800"
+    ],
+    "featured": true,
+    "createdAt": "2026-05-02T10:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "slug": "casa-moderna-juriquilla-queretaro",
+    "title": "Casa moderna de diseño en Juriquilla",
+    "zone": "Querétaro",
+    "type": "venta",
+    "price": 9800000,
+    "currency": "MXN",
+    "bedrooms": 4,
+    "bathrooms": 4,
+    "area": 420,
+    "description": "Residencia de arquitectura contemporánea dentro de fraccionamiento privado en Juriquilla. Amplios ventanales, jardín interior, cocina integral de diseño europeo y estudio independiente. A minutos de los mejores colegios y centros comerciales de Querétaro.",
+    "images": [
+      "https://picsum.photos/seed/selveo-queretaro-1/1200/800",
+      "https://picsum.photos/seed/selveo-queretaro-2/1200/800",
+      "https://picsum.photos/seed/selveo-queretaro-3/1200/800"
+    ],
+    "featured": true,
+    "createdAt": "2026-04-18T10:00:00.000Z"
+  },
+  {
+    "id": "3",
+    "slug": "casa-frente-al-lago-valle-de-bravo",
+    "title": "Casa frente al lago en Valle de Bravo",
+    "zone": "Valle de Bravo",
+    "type": "renta",
+    "price": 65000,
+    "currency": "MXN",
+    "bedrooms": 5,
+    "bathrooms": 4.5,
+    "area": 550,
+    "description": "Espectacular casa de descanso con vista directa al lago de Valle de Bravo. Terrazas de piedra, chimenea exterior, muelle privado y jardín arbolado. Ideal para fines de semana en familia o eventos privados, disponible en renta con o sin servicio de administración.",
+    "images": [
+      "https://picsum.photos/seed/selveo-valle-1/1200/800",
+      "https://picsum.photos/seed/selveo-valle-2/1200/800",
+      "https://picsum.photos/seed/selveo-valle-3/1200/800"
+    ],
+    "featured": true,
+    "createdAt": "2026-06-01T10:00:00.000Z"
+  },
+  {
+    "id": "4",
+    "slug": "villa-con-alberca-malinalco",
+    "title": "Villa con alberca y jardín en Malinalco",
+    "zone": "Malinalco",
+    "type": "venta",
+    "price": 7200000,
+    "currency": "MXN",
+    "bedrooms": 4,
+    "bathrooms": 3,
+    "area": 380,
+    "description": "Villa de un solo nivel rodeada de vegetación, con alberca climatizada, palapa techada y vista a los cerros de Malinalco. Construcción en piedra y madera que respeta la arquitectura tradicional del pueblo mágico. Un refugio de paz a menos de dos horas de la Ciudad de México.",
+    "images": [
+      "https://picsum.photos/seed/selveo-malinalco-1/1200/800",
+      "https://picsum.photos/seed/selveo-malinalco-2/1200/800",
+      "https://picsum.photos/seed/selveo-malinalco-3/1200/800"
+    ],
+    "featured": false,
+    "createdAt": "2026-03-22T10:00:00.000Z"
+  },
+  {
+    "id": "5",
+    "slug": "departamento-interlomas-edomex",
+    "title": "Departamento amueblado en Interlomas",
+    "zone": "Edomex",
+    "type": "renta",
+    "price": 38000,
+    "currency": "MXN",
+    "bedrooms": 2,
+    "bathrooms": 2.5,
+    "area": 145,
+    "description": "Departamento completamente amueblado en torre de reciente construcción en Interlomas. Amenidades de primer nivel: alberca, gimnasio, roof garden y seguridad privada. A pasos de centros comerciales, oficinas corporativas y las mejores escuelas de la zona.",
+    "images": [
+      "https://picsum.photos/seed/selveo-edomex-1/1200/800",
+      "https://picsum.photos/seed/selveo-edomex-2/1200/800",
+      "https://picsum.photos/seed/selveo-edomex-3/1200/800"
+    ],
+    "featured": false,
+    "createdAt": "2026-06-20T10:00:00.000Z"
+  }
+]
