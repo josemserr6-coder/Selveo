@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { processImageFile } from "@/lib/image-client";
 
 const ZONES = ["CDMX", "Querétaro", "Valle de Bravo", "Malinalco", "Edomex"];
 
@@ -21,13 +22,40 @@ export default function PropertyForm({ property = null }) {
   const [newFiles, setNewFiles] = useState([]);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [progressLabel, setProgressLabel] = useState("");
+  const [processingPhotos, setProcessingPhotos] = useState(false);
+  const [blobEnabled, setBlobEnabled] = useState(false);
 
-  const newPreviews = newFiles.map((f) => URL.createObjectURL(f));
+  useEffect(() => {
+    fetch("/api/admin/upload-status")
+      .then((res) => res.json())
+      .then((data) => setBlobEnabled(!!data.blobEnabled))
+      .catch(() => setBlobEnabled(false));
+  }, []);
 
-  function handleFileChange(e) {
+  const newPreviews = useMemo(() => newFiles.map((f) => URL.createObjectURL(f)), [newFiles]);
+  useEffect(() => {
+    return () => newPreviews.forEach((src) => URL.revokeObjectURL(src));
+  }, [newPreviews]);
+
+  async function handleFileChange(e) {
     const files = Array.from(e.target.files || []);
-    setNewFiles((prev) => [...prev, ...files]);
     e.target.value = "";
+    if (files.length === 0) return;
+
+    setError("");
+    setProcessingPhotos(true);
+    try {
+      const processed = [];
+      for (const file of files) {
+        processed.push(await processImageFile(file));
+      }
+      setNewFiles((prev) => [...prev, ...processed]);
+    } catch {
+      setError("No se pudieron procesar una o más fotos. Intenta de nuevo.");
+    } finally {
+      setProcessingPhotos(false);
+    }
   }
 
   function removeExisting(url) {
@@ -49,29 +77,70 @@ export default function PropertyForm({ property = null }) {
 
     setSaving(true);
     try {
-      const formData = new FormData();
-      formData.set("title", title);
-      formData.set("zone", zone);
-      formData.set("type", type);
-      formData.set("price", price);
-      formData.set("bedrooms", bedrooms);
-      formData.set("bathrooms", bathrooms);
-      formData.set("area", area);
-      formData.set("description", description);
-      if (isEdit) {
-        formData.set("existingImages", JSON.stringify(existingImages));
-      }
-      newFiles.forEach((file) => formData.append("images", file));
-
       const url = isEdit ? `/api/admin/properties/${property.id}` : "/api/admin/properties";
       const method = isEdit ? "PUT" : "POST";
+      let res;
 
-      const res = await fetch(url, { method, body: formData });
+      if (blobEnabled) {
+        let uploadedUrls = [];
+        if (newFiles.length > 0) {
+          setProgressLabel(`Subiendo fotos (0/${newFiles.length})...`);
+          const { upload } = await import("@vercel/blob/client");
+          let done = 0;
+          uploadedUrls = await Promise.all(
+            newFiles.map(async (file) => {
+              const result = await upload(`uploads/${file.name}`, file, {
+                access: "public",
+                handleUploadUrl: "/api/admin/upload",
+              });
+              done += 1;
+              setProgressLabel(`Subiendo fotos (${done}/${newFiles.length})...`);
+              return result.url;
+            })
+          );
+        }
+
+        setProgressLabel("Guardando...");
+        res = await fetch(url, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title,
+            zone,
+            type,
+            price,
+            bedrooms,
+            bathrooms,
+            area,
+            description,
+            images: [...existingImages, ...uploadedUrls],
+          }),
+        });
+      } else {
+        setProgressLabel("Guardando...");
+        const formData = new FormData();
+        formData.set("title", title);
+        formData.set("zone", zone);
+        formData.set("type", type);
+        formData.set("price", price);
+        formData.set("bedrooms", bedrooms);
+        formData.set("bathrooms", bathrooms);
+        formData.set("area", area);
+        formData.set("description", description);
+        if (isEdit) {
+          formData.set("existingImages", JSON.stringify(existingImages));
+        }
+        newFiles.forEach((file) => formData.append("images", file));
+
+        res = await fetch(url, { method, body: formData });
+      }
+
       const data = await res.json();
 
       if (!res.ok) {
         setError(data.error || "Ocurrió un error al guardar.");
         setSaving(false);
+        setProgressLabel("");
         return;
       }
 
@@ -80,6 +149,7 @@ export default function PropertyForm({ property = null }) {
     } catch (err) {
       setError("Ocurrió un error al guardar. Intenta de nuevo.");
       setSaving(false);
+      setProgressLabel("");
     }
   }
 
@@ -231,20 +301,28 @@ export default function PropertyForm({ property = null }) {
 
         <input
           type="file"
-          accept="image/*"
+          accept="image/*,.heic,.heif"
           multiple
+          disabled={processingPhotos}
           onChange={handleFileChange}
-          className="block w-full text-sm text-charcoal-light file:mr-4 file:py-2.5 file:px-5 file:border file:border-gold/40 file:bg-transparent file:text-charcoal file:text-sm file:cursor-pointer hover:file:border-gold"
+          className="block w-full text-sm text-charcoal-light file:mr-4 file:py-2.5 file:px-5 file:border file:border-gold/40 file:bg-transparent file:text-charcoal file:text-sm file:cursor-pointer hover:file:border-gold disabled:opacity-50"
         />
+        {processingPhotos && (
+          <p className="text-xs text-gold-dark mt-2">Procesando fotos...</p>
+        )}
       </div>
 
       <div className="flex items-center gap-4 pt-4">
         <button
           type="submit"
-          disabled={saving}
+          disabled={saving || processingPhotos}
           className="bg-charcoal text-cream px-8 py-3 text-sm tracking-widest2 uppercase hover:bg-gold-dark transition-colors duration-300 disabled:opacity-50"
         >
-          {saving ? "Guardando..." : isEdit ? "Guardar cambios" : "Publicar propiedad"}
+          {saving
+            ? progressLabel || "Guardando..."
+            : isEdit
+              ? "Guardar cambios"
+              : "Publicar propiedad"}
         </button>
         <button
           type="button"
