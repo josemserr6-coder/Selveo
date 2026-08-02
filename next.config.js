@@ -6,7 +6,10 @@ const nextConfig = {
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
     ],
-    localPatterns: [{ pathname: "/logo.png", search: "?v=2" }],
+    localPatterns: [
+      { pathname: "/logo.png", search: "?v=2" },
+      { pathname: "/uploads/**" },
+    ],
   },
 };
 

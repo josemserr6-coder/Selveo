@@ -6,7 +6,7 @@ import PropertyGallery from "@/components/PropertyGallery";
 import PropertyCard from "@/components/PropertyCard";
 import WhatsAppFloatingButton from "@/components/WhatsAppFloatingButton";
 import { getPropertyBySlug, getProperties } from "@/lib/store";
-import { formatPrice, buildWhatsAppLink } from "@/lib/constants";
+import { formatPrice, buildWhatsAppLink, SITE_URL } from "@/lib/constants";
 import { BedIcon, BathIcon, AreaIcon, MapPinIcon } from "@/components/icons";
 
 export const revalidate = 0;
@@ -14,10 +14,44 @@ export const revalidate = 0;
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const property = await getPropertyBySlug(slug);
-  if (!property) return { title: "Propiedad no encontrada | Selveo" };
+  if (!property) {
+    return { title: "Propiedad no encontrada" };
+  }
+
+  const typeLabel = property.type === "venta" ? "en venta" : "en renta";
+  const priceLabel = `${formatPrice(property.price, property.currency)}${
+    property.type === "renta" ? "/mes" : ""
+  }`;
+  const mentionsZone = property.title.toLowerCase().includes(property.zone.toLowerCase());
+  const title = mentionsZone
+    ? `${property.title} — ${typeLabel}`
+    : `${property.title} — ${typeLabel} en ${property.zone}`;
+  const description = `Casa ${typeLabel} en ${property.zone}: ${property.title}. ${property.bedrooms} recámaras, ${property.bathrooms} baños, ${property.area} m². ${priceLabel}. ${property.description}`.slice(
+    0,
+    160
+  );
+  const image = property.images?.[0];
+  const path = `/propiedades/${property.slug}`;
+
   return {
-    title: `${property.title} | Selveo`,
-    description: property.description?.slice(0, 155),
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      type: "website",
+      title,
+      description,
+      url: path,
+      images: image
+        ? [{ url: image, width: 1200, height: 800, alt: property.title }]
+        : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: image ? [image] : undefined,
+    },
   };
 }
 
@@ -32,9 +66,51 @@ export default async function PropertyDetailPage({ params }) {
     .slice(0, 3);
 
   const message = `Hola, me interesa la propiedad "${property.title}" de Selveo`;
+  const path = `/propiedades/${property.slug}`;
+
+  const listingSchema = {
+    "@context": "https://schema.org",
+    "@type": "RealEstateListing",
+    name: property.title,
+    description: property.description,
+    url: `${SITE_URL}${path}`,
+    image: property.images,
+    datePosted: property.createdAt,
+    about: {
+      "@type": "Residence",
+      name: property.title,
+      numberOfRooms: property.bedrooms,
+      numberOfBathroomsTotal: property.bathrooms,
+      floorSize: {
+        "@type": "QuantitativeValue",
+        value: property.area,
+        unitCode: "MTK",
+      },
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: property.zone,
+        addressCountry: "MX",
+      },
+    },
+    offers: {
+      "@type": "Offer",
+      price: property.price,
+      priceCurrency: property.currency || "MXN",
+      availability: "https://schema.org/InStock",
+      businessFunction:
+        property.type === "venta"
+          ? "https://schema.org/Sell"
+          : "https://schema.org/LeaseOut",
+    },
+  };
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(listingSchema) }}
+      />
       <Header forceSolid />
       <main className="bg-cream min-h-screen pt-28 md:pt-32 pb-24">
         <div className="max-w-6xl mx-auto px-6 md:px-10">
@@ -45,7 +121,12 @@ export default async function PropertyDetailPage({ params }) {
             &larr; Volver a propiedades
           </Link>
 
-          <PropertyGallery images={property.images} title={property.title} />
+          <PropertyGallery
+            images={property.images}
+            title={`${property.title} — ${
+              property.type === "venta" ? "casa en venta" : "casa en renta"
+            } en ${property.zone}`}
+          />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mt-12">
             <div className="lg:col-span-2">

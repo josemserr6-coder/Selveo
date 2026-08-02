@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
+import { revalidatePath } from "next/cache";
 import { getProperties, saveProperties, uploadImage } from "@/lib/store";
 import { makeUniqueSlug } from "@/lib/slug";
 
@@ -91,6 +92,9 @@ export async function POST(request) {
 
   properties.push(newProperty);
   await saveProperties(properties);
+
+  revalidatePath("/");
+  revalidatePath("/sitemap.xml");
 
   return NextResponse.json(newProperty, { status: 201 });
 }

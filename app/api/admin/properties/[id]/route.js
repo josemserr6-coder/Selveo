@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { getProperties, saveProperties, uploadImage } from "@/lib/store";
+import { revalidatePath } from "next/cache";
+import { getProperties, saveProperties, uploadImage, deleteImages } from "@/lib/store";
 import { makeUniqueSlug } from "@/lib/slug";
 
 export const runtime = "nodejs";
@@ -101,18 +102,37 @@ export async function PUT(request, { params }) {
   properties[index] = updated;
   await saveProperties(properties);
 
+  // Fotos que estaban antes y ya no forman parte de la propiedad: se borran
+  // de Blob (o del disco local) para no dejar archivos huérfanos.
+  const removedImages = current.images.filter((url) => !images.includes(url));
+  await deleteImages(removedImages);
+
+  revalidatePath("/");
+  revalidatePath("/sitemap.xml");
+  revalidatePath(`/propiedades/${current.slug}`);
+  if (slug !== current.slug) {
+    revalidatePath(`/propiedades/${slug}`);
+  }
+
   return NextResponse.json(updated);
 }
 
 export async function DELETE(_request, { params }) {
   const { id } = await params;
   const properties = await getProperties();
+  const deleted = properties.find((p) => p.id === id);
   const next = properties.filter((p) => p.id !== id);
 
-  if (next.length === properties.length) {
+  if (!deleted) {
     return NextResponse.json({ error: "Propiedad no encontrada" }, { status: 404 });
   }
 
   await saveProperties(next);
+  await deleteImages(deleted.images);
+
+  revalidatePath("/");
+  revalidatePath("/sitemap.xml");
+  revalidatePath(`/propiedades/${deleted.slug}`);
+
   return NextResponse.json({ ok: true });
 }

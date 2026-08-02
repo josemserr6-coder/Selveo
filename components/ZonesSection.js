@@ -20,7 +20,7 @@ export default function ZonesSection() {
               <div className="group relative aspect-[3/4] overflow-hidden cursor-default">
                 <Image
                   src={zone.image}
-                  alt={zone.name}
+                  alt={`Propiedades de lujo en ${zone.name}: ${zone.specialties.join(", ")}`}
                   fill
                   sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
                   className="object-cover transition-transform duration-[1400ms] ease-premium group-hover:scale-110"

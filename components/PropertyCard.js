@@ -15,7 +15,7 @@ export default function PropertyCard({ property }) {
         {cover && (
           <Image
             src={cover}
-            alt={property.title}
+            alt={`${property.title} — ${property.type === "venta" ? "casa en venta" : "casa en renta"} en ${property.zone}`}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-cover"

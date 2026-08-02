@@ -10,7 +10,7 @@ export default function AboutSection() {
           <div className="relative w-full h-full overflow-hidden img-zoom">
             <Image
               src="https://picsum.photos/seed/selveo-nosotros/900/1100"
-              alt="Selveo"
+              alt="Selveo — inmobiliaria de propiedades residenciales y de lujo en México"
               fill
               sizes="(max-width: 1024px) 100vw, 480px"
               className="object-cover"
