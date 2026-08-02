@@ -8,10 +8,14 @@ export default function ZonesSection() {
       <div className="max-w-7xl mx-auto px-6 md:px-10">
         <Reveal className="text-center max-w-2xl mx-auto mb-16">
           <p className="text-xs tracking-widest2 uppercase text-gold-dark mb-3">
-            Dónde operamos
+            Dónde compramos, vendemos y rentamos
           </p>
           <h2 className="font-serif text-4xl md:text-5xl text-charcoal mb-5">Zonas</h2>
-          <div className="divider-gold mx-auto" />
+          <div className="divider-gold mx-auto mb-5" />
+          <p className="text-charcoal-light text-sm md:text-base leading-relaxed">
+            Cinco regiones, decenas de colonias y pueblos donde ayudamos a
+            comprar, vender y rentar con conocimiento local.
+          </p>
         </Reveal>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5">

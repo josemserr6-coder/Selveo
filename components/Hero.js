@@ -52,14 +52,18 @@ export default function Hero() {
         />
 
         <h1 className="font-serif text-5xl md:text-7xl text-charcoal leading-[1.1] tracking-tight">
-          Construye tu legado.
+          <span className="block">Construye tu legado.</span>
+          <span className="block font-sans text-base md:text-xl font-normal tracking-wide text-charcoal-light mt-5">
+            Inmobiliaria de lujo en México — compra, venta y renta de propiedades
+          </span>
         </h1>
 
         <div className="divider-gold my-8" />
 
         <p className="font-sans text-sm md:text-base text-charcoal-light tracking-wide max-w-xl leading-relaxed">
-          Propiedades residenciales y de lujo en Ciudad de México, Querétaro,
-          Valle de Bravo, Malinalco y Estado de México.
+          Casas y departamentos en Santa Fe, Polanco, Interlomas, Zibatá,
+          Juriquilla, Valle de Bravo, Avándaro, Metepec, Huixquilucan y
+          Malinalco.
         </p>
 
         <a

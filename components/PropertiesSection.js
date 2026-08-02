@@ -29,11 +29,13 @@ export default function PropertiesSection({ properties }) {
       <div className="max-w-7xl mx-auto px-6 md:px-10">
         <Reveal className="text-center max-w-2xl mx-auto mb-16">
           <p className="text-xs tracking-widest2 uppercase text-gold-dark mb-3">Portafolio</p>
-          <h2 className="font-serif text-4xl md:text-5xl text-charcoal mb-5">Propiedades</h2>
+          <h2 className="font-serif text-4xl md:text-5xl text-charcoal mb-5">
+            Propiedades de lujo en venta y renta
+          </h2>
           <div className="divider-gold mx-auto mb-5" />
           <p className="text-charcoal-light text-sm md:text-base leading-relaxed">
-            Una selección curada de residencias y propiedades de lujo en venta
-            y renta.
+            Una selección curada de residencias para comprar o rentar en las
+            zonas donde operamos.
           </p>
         </Reveal>
 

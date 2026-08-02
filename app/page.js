@@ -22,7 +22,7 @@ export default async function HomePage() {
     "@type": "RealEstateAgent",
     name: "Selveo",
     description:
-      "Selveo — bienes raíces residenciales y de lujo. Casas en venta y en renta en Santa Fe, Polanco, Interlomas, Zibatá, Juriquilla, Valle de Bravo, Avándaro, Metepec, Huixquilucan y Malinalco.",
+      "Selveo es una agencia inmobiliaria en México especializada en la compra, venta y renta de propiedades residenciales y de lujo en Santa Fe, Polanco, Interlomas, Zibatá, Juriquilla, Valle de Bravo, Avándaro, Metepec, Huixquilucan y Malinalco.",
     slogan: "Construye tu legado.",
     url: SITE_URL,
     logo: `${SITE_URL}/logo.png`,
@@ -30,6 +30,34 @@ export default async function HomePage() {
     telephone: "+52 55 6964 7334",
     priceRange: "$$$",
     areaServed: ZONES.map((zone) => ({ "@type": "City", name: zone.name })),
+    knowsAbout: ZONES.flatMap((zone) => zone.specialties),
+    makesOffer: [
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Compra de propiedades",
+          description:
+            "Acompañamiento para comprar casas y departamentos residenciales y de lujo.",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Venta de propiedades",
+          description: "Estrategia y visibilidad para vender tu casa o propiedad.",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Renta de propiedades",
+          description: "Renta de casas y departamentos residenciales y de lujo.",
+        },
+      },
+    ],
   };
 
   return (

@@ -16,7 +16,7 @@ export default function ContactSection() {
           <div className="divider-gold mx-auto mb-8" />
           <p className="text-cream/60 leading-relaxed mb-10 max-w-xl mx-auto">
             Escríbenos directamente por WhatsApp y con gusto te ayudaremos a
-            encontrar, vender o rentar la propiedad ideal para ti.
+            comprar, vender o rentar la propiedad ideal para ti.
           </p>
         </Reveal>
 

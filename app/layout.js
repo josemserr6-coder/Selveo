@@ -18,9 +18,9 @@ const body = Inter({
 
 const SITE_NAME = "Selveo";
 const DEFAULT_TITLE =
-  "Selveo | Propiedades de lujo en CDMX, Querétaro, Valle de Bravo y más";
+  "Selveo | Inmobiliaria de lujo en México — Compra, venta y renta";
 const DEFAULT_DESCRIPTION =
-  "Selveo — bienes raíces residenciales y de lujo. Casas en venta y en renta en Santa Fe, Polanco, Interlomas, Zibatá, Juriquilla, Valle de Bravo, Avándaro, Metepec, Huixquilucan y Malinalco.";
+  "Selveo es tu inmobiliaria de confianza para comprar, vender o rentar casas y departamentos de lujo en Santa Fe, Polanco, Interlomas, Zibatá, Juriquilla, Valle de Bravo, Avándaro, Metepec, Huixquilucan y Malinalco.";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -31,9 +31,16 @@ export const metadata = {
   description: DEFAULT_DESCRIPTION,
   alternates: { canonical: "/" },
   keywords: [
-    "propiedades de lujo",
+    "inmobiliaria en México",
+    "agencia inmobiliaria",
+    "propiedades de lujo en México",
     "casas en venta",
     "casas en renta",
+    "vender mi casa",
+    "vender propiedad",
+    "comprar casa",
+    "rentar casa",
+    "rentar departamento",
     "bienes raíces México",
     "inmobiliaria de lujo",
     "Santa Fe",
@@ -45,6 +52,7 @@ export const metadata = {
     "Valle de Bravo",
     "Avándaro",
     "Metepec",
+    "Zona Esmeralda",
     "Huixquilucan",
     "Malinalco",
   ],

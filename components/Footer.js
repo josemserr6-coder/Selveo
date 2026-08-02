@@ -16,9 +16,10 @@ export default function Footer() {
             className="h-20 w-auto mb-5 brightness-0 invert opacity-90"
           />
           <p className="font-sans text-sm leading-relaxed max-w-sm text-cream/60">
-            Bienes raíces residenciales y de lujo. Acompañamos a nuestros
-            clientes en la venta y renta de propiedades seleccionadas con
-            criterio, discreción y trato cercano.
+            Agencia inmobiliaria de propiedades residenciales y de lujo.
+            Acompañamos a nuestros clientes en la compra, venta y renta de
+            propiedades seleccionadas con criterio, discreción y trato
+            cercano.
           </p>
         </div>
 
