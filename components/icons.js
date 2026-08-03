@@ -52,6 +52,25 @@ export function ChevronRightIcon(props) {
   );
 }
 
+export function BuildingIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" {...props}>
+      <path d="M5 21V5a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v16" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M15 21v-9a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v9" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8 8h2M8 12h2M8 16h2" strokeLinecap="round" />
+      <path d="M3 21h18" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function CheckIcon(props) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" {...props}>
+      <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function CloseIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" {...props}>

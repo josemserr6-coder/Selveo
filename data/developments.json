@@ -1,0 +1,51 @@
+[
+  {
+    "id": "1",
+    "slug": "vive-zibata-residencial",
+    "name": "Vive Zibatá Residencial",
+    "zone": "Querétaro",
+    "priceFrom": 3200000,
+    "currency": "MXN",
+    "unitTypes": "1, 2 y 3 recámaras",
+    "unitsCount": 64,
+    "amenities": [
+      "Alberca",
+      "Gimnasio",
+      "Roof garden",
+      "Seguridad 24/7",
+      "Coworking",
+      "Pet friendly"
+    ],
+    "description": "Desarrollo residencial de nueva generación en Zibatá, con amenidades tipo resort y amplias áreas verdes. Departamentos de 1 a 3 recámaras pensados para quienes buscan calidad de vida y plusvalía en una de las zonas de mayor crecimiento de Querétaro.",
+    "images": [
+      "https://picsum.photos/seed/selveo-dev-zibata-1/1200/800",
+      "https://picsum.photos/seed/selveo-dev-zibata-2/1200/800",
+      "https://picsum.photos/seed/selveo-dev-zibata-3/1200/800"
+    ],
+    "createdAt": "2026-07-10T10:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "slug": "distrito-interlomas",
+    "name": "Distrito Interlomas",
+    "zone": "Edomex",
+    "priceFrom": 5800000,
+    "currency": "MXN",
+    "unitTypes": "2 y 3 recámaras",
+    "unitsCount": 38,
+    "amenities": [
+      "Alberca climatizada",
+      "Gimnasio",
+      "Salón de eventos",
+      "Seguridad 24/7",
+      "Estacionamiento para visitas"
+    ],
+    "description": "Condominio vertical en el corazón de Interlomas, a pasos de los mejores centros comerciales y colegios. Departamentos amplios con acabados de lujo y vista panorámica, en una de las zonas con mejor conectividad del poniente de la ciudad.",
+    "images": [
+      "https://picsum.photos/seed/selveo-dev-interlomas-1/1200/800",
+      "https://picsum.photos/seed/selveo-dev-interlomas-2/1200/800",
+      "https://picsum.photos/seed/selveo-dev-interlomas-3/1200/800"
+    ],
+    "createdAt": "2026-07-22T10:00:00.000Z"
+  }
+]

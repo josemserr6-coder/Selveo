@@ -5,6 +5,7 @@ import Image from "next/image";
 
 const LINKS = [
   { href: "/#propiedades", label: "Propiedades" },
+  { href: "/#desarrollos", label: "Desarrollos" },
   { href: "/#nosotros", label: "Nosotros" },
   { href: "/#zonas", label: "Zonas" },
   { href: "/#contacto", label: "Contacto" },
