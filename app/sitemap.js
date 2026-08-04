@@ -30,6 +30,12 @@ export default async function sitemap() {
       changeFrequency: "daily",
       priority: 1,
     },
+    {
+      url: `${SITE_URL}/desarrollos`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
     ...propertyEntries,
     ...developmentEntries,
   ];

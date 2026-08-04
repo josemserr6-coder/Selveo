@@ -1,7 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import Reveal from "@/components/Reveal";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 
 export default function AboutSection() {
+  const { t } = useLanguage();
+
   return (
     <section id="nosotros" className="bg-cream-light py-24 md:py-32 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 md:px-10 grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-20 items-center">
@@ -20,32 +25,21 @@ export default function AboutSection() {
 
         <Reveal delay={1}>
           <p className="text-xs tracking-widest2 uppercase text-gold-dark mb-4">
-            Agencia inmobiliaria en México
+            {t.home.about.eyebrow}
           </p>
           <h2 className="font-serif text-4xl md:text-5xl text-charcoal leading-tight mb-6">
-            Un criterio claro para decisiones importantes.
+            {t.home.about.heading}
           </h2>
           <div className="divider-gold mb-6" />
-          <p className="text-charcoal-light leading-relaxed mb-5">
-            En Selveo acompañamos a nuestros clientes en la compra, venta y
-            renta de propiedades residenciales y de lujo, con un enfoque
-            discreto, cercano y basado en la confianza. Cada propiedad que
-            representamos es seleccionada con el mismo criterio con el que
-            nuestros clientes construyen su patrimonio.
-          </p>
-          <p className="text-charcoal-light leading-relaxed">
-            Operamos en Ciudad de México, Querétaro, Valle de Bravo,
-            Malinalco y el Estado de México, entendiendo que cada zona tiene
-            su propio carácter y que cada cliente merece un servicio a la
-            medida.
-          </p>
+          <p className="text-charcoal-light leading-relaxed mb-5">{t.home.about.paragraph1}</p>
+          <p className="text-charcoal-light leading-relaxed">{t.home.about.paragraph2}</p>
 
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mt-8 pt-6 border-t border-gold/15 text-xs tracking-widest2 uppercase text-charcoal-light">
-            <span>Compra de propiedades</span>
+            <span>{t.home.about.servicePurchase}</span>
             <span className="w-1 h-1 rounded-full bg-gold/60" />
-            <span>Venta de propiedades</span>
+            <span>{t.home.about.serviceSale}</span>
             <span className="w-1 h-1 rounded-full bg-gold/60" />
-            <span>Renta de propiedades</span>
+            <span>{t.home.about.serviceRent}</span>
           </div>
         </Reveal>
       </div>

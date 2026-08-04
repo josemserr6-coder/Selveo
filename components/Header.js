@@ -5,7 +5,8 @@ import Image from "next/image";
 
 const LINKS = [
   { href: "/#propiedades", label: "Propiedades" },
-  { href: "/#desarrollos", label: "Desarrollos" },
+  { href: "/desarrollos", label: "Desarrollos" },
+  { href: "/desarrollos#fractional", label: "Fractionals" },
   { href: "/#nosotros", label: "Nosotros" },
   { href: "/#zonas", label: "Zonas" },
   { href: "/#contacto", label: "Contacto" },
@@ -90,7 +91,7 @@ export default function Header({ forceSolid = false }) {
 
       <div
         className={`md:hidden overflow-hidden transition-all duration-500 ease-premium ${
-          menuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          menuOpen ? "max-h-[32rem] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
         <nav className="flex flex-col items-center gap-7 py-10 bg-cream/95 backdrop-blur-md border-t border-gold/20">

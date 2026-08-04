@@ -10,6 +10,10 @@ export default function DevelopmentList({ initialDevelopments }) {
   const [developments, setDevelopments] = useState(initialDevelopments);
   const [deletingId, setDeletingId] = useState(null);
 
+  function nameOf(d) {
+    return d.name?.es || d.name || "";
+  }
+
   async function handleDelete(id, name) {
     if (!confirm(`¿Eliminar "${name}"? Esta acción no se puede deshacer.`)) return;
 
@@ -44,9 +48,10 @@ export default function DevelopmentList({ initialDevelopments }) {
           />
 
           <div className="flex-1 min-w-0">
-            <p className="font-serif text-lg text-charcoal truncate">{d.name}</p>
+            <p className="font-serif text-lg text-charcoal truncate">{nameOf(d)}</p>
             <p className="text-sm text-charcoal-light">
-              {d.zone} · Desde {formatPrice(d.priceFrom, d.currency)} · {d.unitsCount} unidades
+              {d.zone} · Desde {formatPrice(d.priceFrom, d.currency)} · {d.unitsCount} unidades ·{" "}
+              {d.status} · {d.modality}
             </p>
           </div>
 
@@ -65,7 +70,7 @@ export default function DevelopmentList({ initialDevelopments }) {
               Editar
             </Link>
             <button
-              onClick={() => handleDelete(d.id, d.name)}
+              onClick={() => handleDelete(d.id, nameOf(d))}
               disabled={deletingId === d.id}
               className="text-xs tracking-wide uppercase text-red-600 hover:text-red-800 transition-colors disabled:opacity-50"
             >

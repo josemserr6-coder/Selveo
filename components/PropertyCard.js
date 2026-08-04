@@ -1,9 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { formatPrice } from "@/lib/constants";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { BedIcon, BathIcon, AreaIcon, MapPinIcon } from "@/components/icons";
 
 export default function PropertyCard({ property }) {
+  const { t } = useLanguage();
   const cover = property.images?.[0];
 
   return (
@@ -22,7 +24,7 @@ export default function PropertyCard({ property }) {
           />
         )}
         <span className="absolute top-4 left-4 bg-cream/95 text-charcoal text-[11px] tracking-widest2 uppercase px-3 py-1.5">
-          {property.type === "venta" ? "Venta" : "Renta"}
+          {property.type === "venta" ? t.home.properties.typeVenta : t.home.properties.typeRenta}
         </span>
       </div>
 
@@ -39,7 +41,7 @@ export default function PropertyCard({ property }) {
         <p className="font-sans text-lg text-charcoal mb-4">
           {formatPrice(property.price, property.currency)}
           {property.type === "renta" && (
-            <span className="text-sm text-charcoal-light"> /mes</span>
+            <span className="text-sm text-charcoal-light"> {t.home.properties.perMonth}</span>
           )}
         </p>
 

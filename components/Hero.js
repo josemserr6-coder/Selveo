@@ -2,8 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import LanguageToggle from "@/components/desarrollos/LanguageToggle";
 
 export default function Hero() {
+  const { t } = useLanguage();
   const bgRef = useRef(null);
 
   useEffect(() => {
@@ -41,6 +44,10 @@ export default function Hero() {
         <div className="absolute inset-0 bg-gradient-to-b from-cream/50 via-cream/55 to-cream" />
       </div>
 
+      <div className="absolute top-24 md:top-28 right-6 md:right-10 z-20">
+        <LanguageToggle />
+      </div>
+
       <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-4xl animate-fadeIn">
         <Image
           src="/logo.png?v=2"
@@ -48,29 +55,27 @@ export default function Hero() {
           width={280}
           height={280}
           priority
-          className="h-28 md:h-36 w-auto mb-8"
+          className="h-44 md:h-64 w-auto mb-8"
         />
 
-        <h1 className="font-serif text-5xl md:text-7xl text-charcoal leading-[1.1] tracking-tight">
-          <span className="block">Construye tu legado.</span>
-          <span className="block font-sans text-base md:text-xl font-normal tracking-wide text-charcoal-light mt-5">
-            Inmobiliaria de lujo en México — compra, venta y renta de propiedades
+        <h1 className="font-serif leading-[1.2] tracking-tight">
+          <span className="block text-2xl md:text-4xl text-charcoal">{t.hero.slogan}</span>
+          <span className="block font-sans text-sm md:text-lg font-normal tracking-wide text-charcoal-light mt-4">
+            {t.home.hero.subtitle}
           </span>
         </h1>
 
         <div className="divider-gold my-8" />
 
         <p className="font-sans text-sm md:text-base text-charcoal-light tracking-wide max-w-xl leading-relaxed">
-          Casas y departamentos en Santa Fe, Polanco, Interlomas, Zibatá,
-          Juriquilla, Valle de Bravo, Avándaro, Metepec, Huixquilucan y
-          Malinalco.
+          {t.home.hero.locations}
         </p>
 
         <a
           href="#propiedades"
           className="group mt-10 inline-flex items-center gap-3 border border-gold/60 px-9 py-3.5 text-xs md:text-sm tracking-widest2 uppercase text-charcoal hover:bg-gold hover:text-cream hover:border-gold transition-all duration-500 ease-premium"
         >
-          Ver propiedades
+          {t.home.hero.cta}
           <span className="transition-transform duration-500 ease-premium group-hover:translate-x-1">
             &rarr;
           </span>

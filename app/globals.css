@@ -88,3 +88,12 @@ body {
 .animate-kenburns {
   animation: kenburns 18s ease-out forwards;
 }
+
+/* Ambient "breathing" glow for quiet, elegant hero backgrounds (no photo needed) */
+@keyframes breathe {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.06); }
+}
+.animate-breathe {
+  animation: breathe 10s ease-in-out infinite;
+}

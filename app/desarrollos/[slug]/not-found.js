@@ -14,7 +14,7 @@ export default function DevelopmentNotFound() {
           Puede que ya no esté disponible o que la dirección sea incorrecta.
         </p>
         <Link
-          href="/#desarrollos"
+          href="/desarrollos"
           className="border border-gold/60 px-8 py-3 text-sm tracking-widest2 uppercase text-charcoal hover:bg-gold hover:text-cream hover:border-gold transition-all duration-500"
         >
           Ver desarrollos

@@ -6,39 +6,62 @@ import { makeUniqueSlug } from "@/lib/slug";
 export const runtime = "nodejs";
 
 const ZONES = ["CDMX", "Querétaro", "Valle de Bravo", "Malinalco", "Edomex"];
+const STATUSES = ["preventa", "disponible", "ultimas_unidades"];
+const MODALITIES = ["full", "fractional", "both"];
 
-function normalizeAmenities(raw) {
-  let list = raw;
-  if (typeof raw === "string") {
-    try {
-      list = JSON.parse(raw);
-    } catch {
-      list = [];
-    }
+function asJson(raw, fallback) {
+  if (raw == null) return fallback;
+  if (typeof raw === "object") return raw;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return fallback;
   }
-  if (!Array.isArray(list)) return [];
-  return list.map((a) => a.toString().trim()).filter(Boolean);
+}
+
+function bilingualText(raw) {
+  const obj = asJson(raw, {});
+  return {
+    es: (obj.es || "").toString().trim(),
+    en: (obj.en || "").toString().trim(),
+  };
+}
+
+function bilingualList(raw) {
+  const obj = asJson(raw, {});
+  const clean = (list) =>
+    Array.isArray(list) ? list.map((v) => v.toString().trim()).filter(Boolean) : [];
+  return { es: clean(obj.es), en: clean(obj.en) };
 }
 
 function normalizeFields(data) {
   return {
-    name: (data.name || "").toString().trim(),
     zone: (data.zone || "").toString(),
+    status: (data.status || "").toString(),
+    modality: (data.modality || "").toString(),
     priceFrom: Number(data.priceFrom),
-    unitTypes: (data.unitTypes || "").toString().trim(),
     unitsCount: Number(data.unitsCount),
-    description: (data.description || "").toString().trim(),
-    amenities: normalizeAmenities(data.amenities),
+    name: bilingualText(data.name),
+    location: bilingualText(data.location),
+    shortDescription: bilingualText(data.shortDescription),
+    description: bilingualText(data.description),
+    unitTypes: bilingualText(data.unitTypes),
+    featureTags: bilingualList(data.featureTags),
+    amenities: bilingualList(data.amenities),
   };
 }
 
 function fieldsAreValid(f) {
   return (
-    !!f.name &&
+    !!f.name.es &&
+    !!f.name.en &&
     ZONES.includes(f.zone) &&
+    STATUSES.includes(f.status) &&
+    MODALITIES.includes(f.modality) &&
     Number.isFinite(f.priceFrom) &&
-    !!f.unitTypes &&
-    Number.isFinite(f.unitsCount)
+    Number.isFinite(f.unitsCount) &&
+    !!f.unitTypes.es &&
+    !!f.unitTypes.en
   );
 }
 
@@ -64,12 +87,17 @@ export async function PUT(request, { params }) {
   } else {
     const formData = await request.formData();
     fields = normalizeFields({
-      name: formData.get("name"),
       zone: formData.get("zone"),
+      status: formData.get("status"),
+      modality: formData.get("modality"),
       priceFrom: formData.get("priceFrom"),
-      unitTypes: formData.get("unitTypes"),
       unitsCount: formData.get("unitsCount"),
+      name: formData.get("name"),
+      location: formData.get("location"),
+      shortDescription: formData.get("shortDescription"),
       description: formData.get("description"),
+      unitTypes: formData.get("unitTypes"),
+      featureTags: formData.get("featureTags"),
       amenities: formData.get("amenities"),
     });
 
@@ -99,18 +127,26 @@ export async function PUT(request, { params }) {
 
   const current = developments[index];
   const otherSlugs = developments.filter((d) => d.id !== id).map((d) => d.slug);
-  const slug = fields.name === current.name ? current.slug : makeUniqueSlug(fields.name, otherSlugs);
+  const slug =
+    fields.name.es === (current.name?.es || current.name)
+      ? current.slug
+      : makeUniqueSlug(fields.name.es, otherSlugs);
 
   const updated = {
     ...current,
-    name: fields.name,
     slug,
     zone: fields.zone,
+    status: fields.status,
+    modality: fields.modality,
     priceFrom: fields.priceFrom,
-    unitTypes: fields.unitTypes,
     unitsCount: fields.unitsCount,
-    amenities: fields.amenities,
+    name: fields.name,
+    location: fields.location,
+    shortDescription: fields.shortDescription,
     description: fields.description,
+    unitTypes: fields.unitTypes,
+    featureTags: fields.featureTags,
+    amenities: fields.amenities,
     images,
   };
 
@@ -122,7 +158,7 @@ export async function PUT(request, { params }) {
   const removedImages = current.images.filter((url) => !images.includes(url));
   await deleteImages(removedImages);
 
-  revalidatePath("/");
+  revalidatePath("/desarrollos");
   revalidatePath("/sitemap.xml");
   revalidatePath(`/desarrollos/${current.slug}`);
   if (slug !== current.slug) {
@@ -145,7 +181,7 @@ export async function DELETE(_request, { params }) {
   await saveDevelopments(next);
   await deleteImages(deleted.images);
 
-  revalidatePath("/");
+  revalidatePath("/desarrollos");
   revalidatePath("/sitemap.xml");
   revalidatePath(`/desarrollos/${deleted.slug}`);
 

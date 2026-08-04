@@ -1,26 +1,15 @@
 import Header from "@/components/Header";
-import Hero from "@/components/Hero";
-import PropertiesSection from "@/components/PropertiesSection";
-import DevelopmentsSection from "@/components/DevelopmentsSection";
-import AboutSection from "@/components/AboutSection";
-import ZonesSection from "@/components/ZonesSection";
-import ContactSection from "@/components/ContactSection";
+import HomePageContent from "@/components/HomePageContent";
 import Footer from "@/components/Footer";
 import WhatsAppFloatingButton from "@/components/WhatsAppFloatingButton";
-import { getProperties, getDevelopments } from "@/lib/store";
+import { getProperties } from "@/lib/store";
 import { SITE_URL, ZONES } from "@/lib/constants";
 
 export const revalidate = 0;
 
 export default async function HomePage() {
-  const [properties, developments] = await Promise.all([
-    getProperties(),
-    getDevelopments(),
-  ]);
+  const properties = await getProperties();
   const sorted = [...properties].sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  );
-  const sortedDevelopments = [...developments].sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
 
@@ -73,6 +62,15 @@ export default async function HomePage() {
             "Venta de unidades en desarrollos y condominios de nueva construcción.",
         },
       },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Fractional (propiedad fraccionada)",
+          description:
+            "Inversión inmobiliaria en copropiedad fractional en desarrollos seleccionados.",
+        },
+      },
     ],
   };
 
@@ -84,14 +82,7 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(businessSchema) }}
       />
       <Header />
-      <main>
-        <Hero />
-        <PropertiesSection properties={sorted} />
-        <DevelopmentsSection developments={sortedDevelopments} />
-        <AboutSection />
-        <ZonesSection />
-        <ContactSection />
-      </main>
+      <HomePageContent properties={sorted} />
       <Footer />
       <WhatsAppFloatingButton />
     </>

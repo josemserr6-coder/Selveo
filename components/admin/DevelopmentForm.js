@@ -5,20 +5,80 @@ import { useEffect, useMemo, useState } from "react";
 import { processImageFile } from "@/lib/image-client";
 
 const ZONES = ["CDMX", "Querétaro", "Valle de Bravo", "Malinalco", "Edomex"];
+const STATUSES = [
+  { value: "preventa", label: "Preventa" },
+  { value: "disponible", label: "Disponible" },
+  { value: "ultimas_unidades", label: "Últimas unidades" },
+];
+const MODALITIES = [
+  { value: "full", label: "Full Ownership" },
+  { value: "fractional", label: "Fractional" },
+  { value: "both", label: "Full Ownership & Fractional" },
+];
+
+const inputClass =
+  "w-full border border-gold/25 bg-cream px-4 py-3 text-charcoal focus:outline-none focus:border-gold";
+const labelClass = "block text-sm text-charcoal-light mb-2";
+const langTagClass = "text-[10px] tracking-widest2 uppercase text-gold-dark mb-1.5 block";
+
+function BilingualField({ label, esValue, enValue, onEsChange, onEnChange, textarea = false, placeholder }) {
+  const Field = textarea ? "textarea" : "input";
+  return (
+    <div>
+      <label className={labelClass}>{label}</label>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <span className={langTagClass}>Español</span>
+          <Field
+            required
+            rows={textarea ? 5 : undefined}
+            value={esValue}
+            onChange={(e) => onEsChange(e.target.value)}
+            className={`${inputClass} ${textarea ? "resize-y" : ""}`}
+            placeholder={placeholder?.es}
+          />
+        </div>
+        <div>
+          <span className={langTagClass}>English</span>
+          <Field
+            required
+            rows={textarea ? 5 : undefined}
+            value={enValue}
+            onChange={(e) => onEnChange(e.target.value)}
+            className={`${inputClass} ${textarea ? "resize-y" : ""}`}
+            placeholder={placeholder?.en}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function DevelopmentForm({ development = null }) {
   const router = useRouter();
   const isEdit = !!development;
 
-  const [name, setName] = useState(development?.name || "");
   const [zone, setZone] = useState(development?.zone || ZONES[0]);
+  const [status, setStatus] = useState(development?.status || STATUSES[0].value);
+  const [modality, setModality] = useState(development?.modality || MODALITIES[0].value);
   const [priceFrom, setPriceFrom] = useState(development?.priceFrom ?? "");
-  const [unitTypes, setUnitTypes] = useState(development?.unitTypes || "");
   const [unitsCount, setUnitsCount] = useState(development?.unitsCount ?? "");
-  const [amenities, setAmenities] = useState(
-    (development?.amenities || []).join(", ")
-  );
-  const [description, setDescription] = useState(development?.description || "");
+
+  const [nameEs, setNameEs] = useState(development?.name?.es || "");
+  const [nameEn, setNameEn] = useState(development?.name?.en || "");
+  const [locationEs, setLocationEs] = useState(development?.location?.es || "");
+  const [locationEn, setLocationEn] = useState(development?.location?.en || "");
+  const [shortDescEs, setShortDescEs] = useState(development?.shortDescription?.es || "");
+  const [shortDescEn, setShortDescEn] = useState(development?.shortDescription?.en || "");
+  const [descEs, setDescEs] = useState(development?.description?.es || "");
+  const [descEn, setDescEn] = useState(development?.description?.en || "");
+  const [unitTypesEs, setUnitTypesEs] = useState(development?.unitTypes?.es || "");
+  const [unitTypesEn, setUnitTypesEn] = useState(development?.unitTypes?.en || "");
+  const [tagsEs, setTagsEs] = useState((development?.featureTags?.es || []).join(", "));
+  const [tagsEn, setTagsEn] = useState((development?.featureTags?.en || []).join(", "));
+  const [amenitiesEs, setAmenitiesEs] = useState((development?.amenities?.es || []).join(", "));
+  const [amenitiesEn, setAmenitiesEn] = useState((development?.amenities?.en || []).join(", "));
+
   const [existingImages, setExistingImages] = useState(development?.images || []);
   const [newFiles, setNewFiles] = useState([]);
   const [error, setError] = useState("");
@@ -67,6 +127,13 @@ export default function DevelopmentForm({ development = null }) {
     setNewFiles((prev) => prev.filter((_, i) => i !== index));
   }
 
+  function splitList(value) {
+    return value
+      .split(",")
+      .map((v) => v.trim())
+      .filter(Boolean);
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
@@ -82,10 +149,22 @@ export default function DevelopmentForm({ development = null }) {
         ? `/api/admin/developments/${development.id}`
         : "/api/admin/developments";
       const method = isEdit ? "PUT" : "POST";
-      const amenitiesList = amenities
-        .split(",")
-        .map((a) => a.trim())
-        .filter(Boolean);
+
+      const payloadFields = {
+        zone,
+        status,
+        modality,
+        priceFrom,
+        unitsCount,
+        name: { es: nameEs, en: nameEn },
+        location: { es: locationEs, en: locationEn },
+        shortDescription: { es: shortDescEs, en: shortDescEn },
+        description: { es: descEs, en: descEn },
+        unitTypes: { es: unitTypesEs, en: unitTypesEn },
+        featureTags: { es: splitList(tagsEs), en: splitList(tagsEn) },
+        amenities: { es: splitList(amenitiesEs), en: splitList(amenitiesEn) },
+      };
+
       let res;
 
       if (blobEnabled) {
@@ -112,26 +191,25 @@ export default function DevelopmentForm({ development = null }) {
           method,
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            name,
-            zone,
-            priceFrom,
-            unitTypes,
-            unitsCount,
-            amenities: amenitiesList,
-            description,
+            ...payloadFields,
             images: [...existingImages, ...uploadedUrls],
           }),
         });
       } else {
         setProgressLabel("Guardando...");
         const formData = new FormData();
-        formData.set("name", name);
         formData.set("zone", zone);
+        formData.set("status", status);
+        formData.set("modality", modality);
         formData.set("priceFrom", priceFrom);
-        formData.set("unitTypes", unitTypes);
         formData.set("unitsCount", unitsCount);
-        formData.set("amenities", JSON.stringify(amenitiesList));
-        formData.set("description", description);
+        formData.set("name", JSON.stringify(payloadFields.name));
+        formData.set("location", JSON.stringify(payloadFields.location));
+        formData.set("shortDescription", JSON.stringify(payloadFields.shortDescription));
+        formData.set("description", JSON.stringify(payloadFields.description));
+        formData.set("unitTypes", JSON.stringify(payloadFields.unitTypes));
+        formData.set("featureTags", JSON.stringify(payloadFields.featureTags));
+        formData.set("amenities", JSON.stringify(payloadFields.amenities));
         if (isEdit) {
           formData.set("existingImages", JSON.stringify(existingImages));
         }
@@ -159,102 +237,134 @@ export default function DevelopmentForm({ development = null }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 max-w-2xl">
+    <form onSubmit={handleSubmit} className="space-y-8 max-w-3xl">
       {error && (
         <p className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3">
           {error}
         </p>
       )}
 
-      <div>
-        <label className="block text-sm text-charcoal-light mb-2">Nombre del desarrollo</label>
-        <input
-          required
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full border border-gold/25 bg-cream px-4 py-3 text-charcoal focus:outline-none focus:border-gold"
-          placeholder="Ej. Vive Zibatá Residencial"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm text-charcoal-light mb-2">Zona</label>
-        <select
-          value={zone}
-          onChange={(e) => setZone(e.target.value)}
-          className="w-full border border-gold/25 bg-cream px-4 py-3 text-charcoal focus:outline-none focus:border-gold"
-        >
-          {ZONES.map((z) => (
-            <option key={z} value={z}>
-              {z}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         <div>
-          <label className="block text-sm text-charcoal-light mb-2">Precio desde (MXN)</label>
-          <input
-            required
-            type="number"
-            min="0"
-            value={priceFrom}
-            onChange={(e) => setPriceFrom(e.target.value)}
-            className="w-full border border-gold/25 bg-cream px-4 py-3 text-charcoal focus:outline-none focus:border-gold"
-          />
+          <label className={labelClass}>Zona</label>
+          <select value={zone} onChange={(e) => setZone(e.target.value)} className={inputClass}>
+            {ZONES.map((z) => (
+              <option key={z} value={z}>
+                {z}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
-          <label className="block text-sm text-charcoal-light mb-2"># de unidades (aprox.)</label>
+          <label className={labelClass}>Estado</label>
+          <select value={status} onChange={(e) => setStatus(e.target.value)} className={inputClass}>
+            {STATUSES.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="col-span-2 md:col-span-1">
+          <label className={labelClass}>Modalidad</label>
+          <select value={modality} onChange={(e) => setModality(e.target.value)} className={inputClass}>
+            {MODALITIES.map((m) => (
+              <option key={m.value} value={m.value}>
+                {m.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className={labelClass}># unidades</label>
           <input
             required
             type="number"
             min="0"
             value={unitsCount}
             onChange={(e) => setUnitsCount(e.target.value)}
-            className="w-full border border-gold/25 bg-cream px-4 py-3 text-charcoal focus:outline-none focus:border-gold"
+            className={inputClass}
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm text-charcoal-light mb-2">
-          Tipos de unidad disponibles
-        </label>
+        <label className={labelClass}>Precio desde (MXN)</label>
         <input
           required
-          value={unitTypes}
-          onChange={(e) => setUnitTypes(e.target.value)}
-          className="w-full border border-gold/25 bg-cream px-4 py-3 text-charcoal focus:outline-none focus:border-gold"
-          placeholder="Ej. 1, 2 y 3 recámaras"
+          type="number"
+          min="0"
+          value={priceFrom}
+          onChange={(e) => setPriceFrom(e.target.value)}
+          className={inputClass}
         />
       </div>
 
-      <div>
-        <label className="block text-sm text-charcoal-light mb-2">
-          Amenidades (separadas por coma)
-        </label>
-        <input
-          value={amenities}
-          onChange={(e) => setAmenities(e.target.value)}
-          className="w-full border border-gold/25 bg-cream px-4 py-3 text-charcoal focus:outline-none focus:border-gold"
-          placeholder="Ej. Alberca, Gimnasio, Roof garden, Seguridad 24/7"
-        />
-      </div>
+      <BilingualField
+        label="Nombre del desarrollo"
+        esValue={nameEs}
+        enValue={nameEn}
+        onEsChange={setNameEs}
+        onEnChange={setNameEn}
+        placeholder={{ es: "Ej. Vive Zibatá Residencial", en: "Ex. Vive Zibatá Residencial" }}
+      />
+
+      <BilingualField
+        label="Ubicación (colonia/pueblo, zona)"
+        esValue={locationEs}
+        enValue={locationEn}
+        onEsChange={setLocationEs}
+        onEnChange={setLocationEn}
+        placeholder={{ es: "Ej. Zibatá, Querétaro", en: "Ex. Zibatá, Querétaro" }}
+      />
+
+      <BilingualField
+        label="Descripción corta (para la tarjeta)"
+        esValue={shortDescEs}
+        enValue={shortDescEn}
+        onEsChange={setShortDescEs}
+        onEnChange={setShortDescEn}
+        textarea
+      />
+
+      <BilingualField
+        label="Descripción completa"
+        esValue={descEs}
+        enValue={descEn}
+        onEsChange={setDescEs}
+        onEnChange={setDescEn}
+        textarea
+      />
+
+      <BilingualField
+        label="Tipos de unidad disponibles"
+        esValue={unitTypesEs}
+        enValue={unitTypesEn}
+        onEsChange={setUnitTypesEs}
+        onEnChange={setUnitTypesEn}
+        placeholder={{ es: "Ej. 1, 2 y 3 recámaras", en: "Ex. 1, 2 and 3 bedrooms" }}
+      />
+
+      <BilingualField
+        label="Etiquetas destacadas (separadas por coma)"
+        esValue={tagsEs}
+        enValue={tagsEn}
+        onEsChange={setTagsEs}
+        onEnChange={setTagsEn}
+        placeholder={{ es: "Ej. Frente al lago, Fractional desde 1/8", en: "Ex. Lakefront, Fractional from 1/8 share" }}
+      />
+
+      <BilingualField
+        label="Amenidades (separadas por coma)"
+        esValue={amenitiesEs}
+        enValue={amenitiesEn}
+        onEsChange={setAmenitiesEs}
+        onEnChange={setAmenitiesEn}
+        placeholder={{ es: "Ej. Alberca, Gimnasio, Roof garden", en: "Ex. Pool, Gym, Roof garden" }}
+      />
 
       <div>
-        <label className="block text-sm text-charcoal-light mb-2">Descripción</label>
-        <textarea
-          required
-          rows={6}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full border border-gold/25 bg-cream px-4 py-3 text-charcoal focus:outline-none focus:border-gold resize-y"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm text-charcoal-light mb-2">Fotos</label>
+        <label className={labelClass}>Fotos</label>
 
         {(existingImages.length > 0 || newPreviews.length > 0) && (
           <div className="flex flex-wrap gap-3 mb-4">
