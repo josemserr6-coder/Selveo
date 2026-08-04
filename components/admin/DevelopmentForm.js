@@ -54,13 +54,15 @@ function BilingualField({ label, esValue, enValue, onEsChange, onEnChange, texta
   );
 }
 
-export default function DevelopmentForm({ development = null }) {
+export default function DevelopmentForm({ development = null, initialModality = null }) {
   const router = useRouter();
   const isEdit = !!development;
 
   const [zone, setZone] = useState(development?.zone || ZONES[0]);
   const [status, setStatus] = useState(development?.status || STATUSES[0].value);
-  const [modality, setModality] = useState(development?.modality || MODALITIES[0].value);
+  const [modality, setModality] = useState(
+    development?.modality || initialModality || MODALITIES[0].value
+  );
   const [priceFrom, setPriceFrom] = useState(development?.priceFrom ?? "");
   const [unitsCount, setUnitsCount] = useState(development?.unitsCount ?? "");
 
@@ -238,6 +240,12 @@ export default function DevelopmentForm({ development = null }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8 max-w-3xl">
+      {!isEdit && initialModality === "fractional" && (
+        <p className="bg-gold/10 border border-gold/30 text-gold-dark text-sm px-4 py-3">
+          Estás agregando un desarrollo en modalidad Fractional. Puedes cambiarlo abajo en
+          &quot;Modalidad&quot; si también aplica Full Ownership.
+        </p>
+      )}
       {error && (
         <p className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3">
           {error}

@@ -18,6 +18,9 @@ export default async function AdminDashboardPage() {
   const sortedDevelopments = [...developments].sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
+  const fractionalDevelopments = sortedDevelopments.filter(
+    (d) => d.modality === "fractional" || d.modality === "both"
+  );
 
   return (
     <>
@@ -61,6 +64,33 @@ export default async function AdminDashboardPage() {
           </div>
 
           <DevelopmentList initialDevelopments={sortedDevelopments} />
+        </section>
+
+        <section>
+          <div className="flex items-center justify-between mb-10">
+            <div>
+              <h2 className="font-serif text-3xl text-charcoal mb-1">Fractionals</h2>
+              <p className="text-charcoal-light text-sm">
+                {fractionalDevelopments.length} desarrollo
+                {fractionalDevelopments.length !== 1 ? "s" : ""} en modalidad Fractional
+              </p>
+            </div>
+            <Link
+              href="/panel-selveo/desarrollos/nueva?modality=fractional"
+              className="bg-charcoal text-cream px-6 py-3 text-sm tracking-widest2 uppercase hover:bg-gold-dark transition-colors duration-300"
+            >
+              + Agregar fractional
+            </Link>
+          </div>
+
+          {fractionalDevelopments.length === 0 ? (
+            <p className="text-charcoal-light py-16 text-center border-t border-b border-gold/15">
+              Aún no hay desarrollos en modalidad Fractional. Los que marques como
+              &quot;Fractional&quot; o &quot;Full Ownership &amp; Fractional&quot; aparecerán aquí.
+            </p>
+          ) : (
+            <DevelopmentList initialDevelopments={fractionalDevelopments} />
+          )}
         </section>
       </main>
     </>
