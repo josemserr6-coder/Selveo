@@ -14,8 +14,8 @@ export default function AboutSection() {
           <div className="absolute -inset-4 border border-gold/30 hidden md:block" />
           <div className="relative w-full h-full overflow-hidden img-zoom">
             <Image
-              src="https://picsum.photos/seed/selveo-nosotros/900/1100"
-              alt="Selveo — inmobiliaria de propiedades residenciales y de lujo en México"
+              src="https://images.unsplash.com/photo-1706034136283-c9b6a68d1eb8?w=900&h=1100&fit=crop&q=80"
+              alt="Parque La Mexicana en Santa Fe, Ciudad de México, rodeado de condominios"
               fill
               sizes="(max-width: 1024px) 100vw, 480px"
               className="object-cover"
