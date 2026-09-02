@@ -3,10 +3,10 @@ import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 import { getProperties, saveProperties, uploadImage } from "@/lib/store";
 import { makeUniqueSlug } from "@/lib/slug";
+import { ZONE_KEYS } from "@/lib/constants";
 
 export const runtime = "nodejs";
 
-const ZONES = ["CDMX", "Querétaro", "Valle de Bravo", "Malinalco", "Edomex"];
 const TYPES = ["venta", "renta"];
 
 function normalizeFields(data) {
@@ -23,7 +23,7 @@ function normalizeFields(data) {
 }
 
 function fieldsAreValid(f) {
-  return !!f.title && ZONES.includes(f.zone) && TYPES.includes(f.type) && Number.isFinite(f.price);
+  return !!f.title && ZONE_KEYS.includes(f.zone) && TYPES.includes(f.type) && Number.isFinite(f.price);
 }
 
 export async function GET() {

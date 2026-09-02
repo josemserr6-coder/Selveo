@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getDevelopments, saveDevelopments, uploadImage, deleteImages } from "@/lib/store";
 import { makeUniqueSlug } from "@/lib/slug";
+import { ZONE_KEYS } from "@/lib/constants";
 
 export const runtime = "nodejs";
 
-const ZONES = ["CDMX", "Querétaro", "Valle de Bravo", "Malinalco", "Edomex"];
 const STATUSES = ["preventa", "disponible", "ultimas_unidades"];
 const MODALITIES = ["full", "fractional", "both"];
 
@@ -55,7 +55,7 @@ function fieldsAreValid(f) {
   return (
     !!f.name.es &&
     !!f.name.en &&
-    ZONES.includes(f.zone) &&
+    ZONE_KEYS.includes(f.zone) &&
     STATUSES.includes(f.status) &&
     MODALITIES.includes(f.modality) &&
     Number.isFinite(f.priceFrom) &&

@@ -3,15 +3,14 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { processImageFile } from "@/lib/image-client";
-
-const ZONES = ["CDMX", "Querétaro", "Valle de Bravo", "Malinalco", "Edomex"];
+import { ZONES_BY_COUNTRY, ZONE_KEYS } from "@/lib/constants";
 
 export default function PropertyForm({ property = null }) {
   const router = useRouter();
   const isEdit = !!property;
 
   const [title, setTitle] = useState(property?.title || "");
-  const [zone, setZone] = useState(property?.zone || ZONES[0]);
+  const [zone, setZone] = useState(property?.zone || ZONE_KEYS[0]);
   const [type, setType] = useState(property?.type || "venta");
   const [price, setPrice] = useState(property?.price ?? "");
   const [bedrooms, setBedrooms] = useState(property?.bedrooms ?? "");
@@ -180,10 +179,14 @@ export default function PropertyForm({ property = null }) {
             onChange={(e) => setZone(e.target.value)}
             className="w-full border border-gold/25 bg-cream px-4 py-3 text-charcoal focus:outline-none focus:border-gold"
           >
-            {ZONES.map((z) => (
-              <option key={z} value={z}>
-                {z}
-              </option>
+            {ZONES_BY_COUNTRY.map((group) => (
+              <optgroup key={group.country} label={group.country}>
+                {group.zones.map((z) => (
+                  <option key={z.key} value={z.key}>
+                    {z.name}
+                  </option>
+                ))}
+              </optgroup>
             ))}
           </select>
         </div>

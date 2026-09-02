@@ -3,8 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { processImageFile } from "@/lib/image-client";
+import { ZONES_BY_COUNTRY, ZONE_KEYS } from "@/lib/constants";
 
-const ZONES = ["CDMX", "Querétaro", "Valle de Bravo", "Malinalco", "Edomex"];
 const STATUSES = [
   { value: "preventa", label: "Preventa" },
   { value: "disponible", label: "Disponible" },
@@ -58,7 +58,7 @@ export default function DevelopmentForm({ development = null, initialModality = 
   const router = useRouter();
   const isEdit = !!development;
 
-  const [zone, setZone] = useState(development?.zone || ZONES[0]);
+  const [zone, setZone] = useState(development?.zone || ZONE_KEYS[0]);
   const [status, setStatus] = useState(development?.status || STATUSES[0].value);
   const [modality, setModality] = useState(
     development?.modality || initialModality || MODALITIES[0].value
@@ -256,10 +256,14 @@ export default function DevelopmentForm({ development = null, initialModality = 
         <div>
           <label className={labelClass}>Zona</label>
           <select value={zone} onChange={(e) => setZone(e.target.value)} className={inputClass}>
-            {ZONES.map((z) => (
-              <option key={z} value={z}>
-                {z}
-              </option>
+            {ZONES_BY_COUNTRY.map((group) => (
+              <optgroup key={group.country} label={group.country}>
+                {group.zones.map((z) => (
+                  <option key={z.key} value={z.key}>
+                    {z.name}
+                  </option>
+                ))}
+              </optgroup>
             ))}
           </select>
         </div>

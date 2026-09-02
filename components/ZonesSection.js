@@ -24,14 +24,17 @@ export default function ZonesSection() {
           </p>
         </Reveal>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-5">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5">
           {ZONES.map((zone, i) => {
             const zoneName = t.zones[zone.key] || zone.name;
+            // Si el total de zonas es impar, la última ocupa dos columnas en
+            // móvil para que no quede sola y descuadrada.
+            const isLoneOrphan = ZONES.length % 2 === 1 && i === ZONES.length - 1;
             return (
               <Reveal
                 key={zone.key}
                 delay={(i % 5) + 1}
-                className={i === 4 ? "col-span-2 md:col-span-1" : ""}
+                className={isLoneOrphan ? "col-span-2 md:col-span-1" : ""}
               >
                 <div className="group relative aspect-[3/4] overflow-hidden cursor-default">
                   <Image
@@ -45,12 +48,16 @@ export default function ZonesSection() {
                   <div className="absolute inset-0 flex flex-col items-center justify-end text-center p-4 md:p-5">
                     <h3 className="font-serif text-lg md:text-xl text-cream mb-2.5">{zoneName}</h3>
                     <div className="w-8 h-px bg-gold mb-3 group-hover:w-14 transition-all duration-500 ease-premium" />
-                    <p className="text-[10px] tracking-widest2 uppercase text-gold-light/90 mb-1.5">
-                      {t.home.zones.specializeIn}
-                    </p>
-                    <p className="text-cream/80 text-[11px] md:text-xs leading-relaxed">
-                      {zone.specialties.join(" · ")}
-                    </p>
+                    {zone.specialties.length > 0 && (
+                      <>
+                        <p className="text-[10px] tracking-widest2 uppercase text-gold-light/90 mb-1.5">
+                          {t.home.zones.specializeIn}
+                        </p>
+                        <p className="text-cream/80 text-[11px] md:text-xs leading-relaxed">
+                          {zone.specialties.join(" · ")}
+                        </p>
+                      </>
+                    )}
                   </div>
                 </div>
               </Reveal>
