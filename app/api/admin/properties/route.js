@@ -3,27 +3,51 @@ import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 import { getProperties, saveProperties, uploadImage } from "@/lib/store";
 import { makeUniqueSlug } from "@/lib/slug";
-import { ZONE_KEYS } from "@/lib/constants";
+import { ZONE_KEYS, getZoneCurrency } from "@/lib/constants";
 
 export const runtime = "nodejs";
 
 const TYPES = ["venta", "renta"];
 
+function asJson(raw, fallback) {
+  if (raw == null) return fallback;
+  if (typeof raw === "object") return raw;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return fallback;
+  }
+}
+
+function bilingualText(raw) {
+  const obj = asJson(raw, {});
+  return {
+    es: (obj.es || "").toString().trim(),
+    en: (obj.en || "").toString().trim(),
+  };
+}
+
 function normalizeFields(data) {
   return {
-    title: (data.title || "").toString().trim(),
+    title: bilingualText(data.title),
     zone: (data.zone || "").toString(),
     type: (data.type || "").toString(),
     price: Number(data.price),
     bedrooms: Number(data.bedrooms),
     bathrooms: Number(data.bathrooms),
     area: Number(data.area),
-    description: (data.description || "").toString().trim(),
+    description: bilingualText(data.description),
   };
 }
 
 function fieldsAreValid(f) {
-  return !!f.title && ZONE_KEYS.includes(f.zone) && TYPES.includes(f.type) && Number.isFinite(f.price);
+  return (
+    !!f.title.es &&
+    !!f.title.en &&
+    ZONE_KEYS.includes(f.zone) &&
+    TYPES.includes(f.type) &&
+    Number.isFinite(f.price)
+  );
 }
 
 export async function GET() {
@@ -71,7 +95,7 @@ export async function POST(request) {
   }
 
   const properties = await getProperties();
-  const slug = makeUniqueSlug(fields.title, properties.map((p) => p.slug));
+  const slug = makeUniqueSlug(fields.title.es, properties.map((p) => p.slug));
 
   const newProperty = {
     id: randomUUID(),
@@ -80,7 +104,7 @@ export async function POST(request) {
     zone: fields.zone,
     type: fields.type,
     price: fields.price,
-    currency: "MXN",
+    currency: getZoneCurrency(fields.zone),
     bedrooms: Number.isFinite(fields.bedrooms) ? fields.bedrooms : 0,
     bathrooms: Number.isFinite(fields.bathrooms) ? fields.bathrooms : 0,
     area: Number.isFinite(fields.area) ? fields.area : 0,

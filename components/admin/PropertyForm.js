@@ -3,20 +3,23 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { processImageFile } from "@/lib/image-client";
-import { ZONES_BY_COUNTRY, ZONE_KEYS } from "@/lib/constants";
+import { ZONES_BY_COUNTRY, ZONE_KEYS, getZoneCurrency } from "@/lib/constants";
+import BilingualField from "@/components/admin/BilingualField";
 
 export default function PropertyForm({ property = null }) {
   const router = useRouter();
   const isEdit = !!property;
 
-  const [title, setTitle] = useState(property?.title || "");
+  const [titleEs, setTitleEs] = useState(property?.title?.es ?? property?.title ?? "");
+  const [titleEn, setTitleEn] = useState(property?.title?.en ?? "");
   const [zone, setZone] = useState(property?.zone || ZONE_KEYS[0]);
   const [type, setType] = useState(property?.type || "venta");
   const [price, setPrice] = useState(property?.price ?? "");
   const [bedrooms, setBedrooms] = useState(property?.bedrooms ?? "");
   const [bathrooms, setBathrooms] = useState(property?.bathrooms ?? "");
   const [area, setArea] = useState(property?.area ?? "");
-  const [description, setDescription] = useState(property?.description || "");
+  const [descEs, setDescEs] = useState(property?.description?.es ?? property?.description ?? "");
+  const [descEn, setDescEn] = useState(property?.description?.en ?? "");
   const [existingImages, setExistingImages] = useState(property?.images || []);
   const [newFiles, setNewFiles] = useState([]);
   const [error, setError] = useState("");
@@ -24,6 +27,8 @@ export default function PropertyForm({ property = null }) {
   const [progressLabel, setProgressLabel] = useState("");
   const [processingPhotos, setProcessingPhotos] = useState(false);
   const [blobEnabled, setBlobEnabled] = useState(false);
+
+  const currency = getZoneCurrency(zone);
 
   useEffect(() => {
     fetch("/api/admin/upload-status")
@@ -80,6 +85,17 @@ export default function PropertyForm({ property = null }) {
       const method = isEdit ? "PUT" : "POST";
       let res;
 
+      const payloadFields = {
+        title: { es: titleEs, en: titleEn },
+        zone,
+        type,
+        price,
+        bedrooms,
+        bathrooms,
+        area,
+        description: { es: descEs, en: descEn },
+      };
+
       if (blobEnabled) {
         let uploadedUrls = [];
         if (newFiles.length > 0) {
@@ -104,28 +120,21 @@ export default function PropertyForm({ property = null }) {
           method,
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            title,
-            zone,
-            type,
-            price,
-            bedrooms,
-            bathrooms,
-            area,
-            description,
+            ...payloadFields,
             images: [...existingImages, ...uploadedUrls],
           }),
         });
       } else {
         setProgressLabel("Guardando...");
         const formData = new FormData();
-        formData.set("title", title);
+        formData.set("title", JSON.stringify(payloadFields.title));
         formData.set("zone", zone);
         formData.set("type", type);
         formData.set("price", price);
         formData.set("bedrooms", bedrooms);
         formData.set("bathrooms", bathrooms);
         formData.set("area", area);
-        formData.set("description", description);
+        formData.set("description", JSON.stringify(payloadFields.description));
         if (isEdit) {
           formData.set("existingImages", JSON.stringify(existingImages));
         }
@@ -153,23 +162,24 @@ export default function PropertyForm({ property = null }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 max-w-2xl">
+    <form onSubmit={handleSubmit} className="space-y-8 max-w-3xl">
       {error && (
         <p className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3">
           {error}
         </p>
       )}
 
-      <div>
-        <label className="block text-sm text-charcoal-light mb-2">Título</label>
-        <input
-          required
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full border border-gold/25 bg-cream px-4 py-3 text-charcoal focus:outline-none focus:border-gold"
-          placeholder="Ej. Penthouse con vista panorámica en Polanco"
-        />
-      </div>
+      <BilingualField
+        label="Título"
+        esValue={titleEs}
+        enValue={titleEn}
+        onEsChange={setTitleEs}
+        onEnChange={setTitleEn}
+        placeholder={{
+          es: "Ej. Penthouse con vista panorámica en Polanco",
+          en: "Ex. Penthouse with panoramic views in Polanco",
+        }}
+      />
 
       <div className="grid grid-cols-2 gap-6">
         <div>
@@ -206,7 +216,8 @@ export default function PropertyForm({ property = null }) {
 
       <div>
         <label className="block text-sm text-charcoal-light mb-2">
-          Precio (MXN{type === "renta" ? " / mes" : ""})
+          Precio ({currency}
+          {type === "renta" ? " / mes" : ""})
         </label>
         <input
           required
@@ -255,16 +266,14 @@ export default function PropertyForm({ property = null }) {
         </div>
       </div>
 
-      <div>
-        <label className="block text-sm text-charcoal-light mb-2">Descripción</label>
-        <textarea
-          required
-          rows={6}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full border border-gold/25 bg-cream px-4 py-3 text-charcoal focus:outline-none focus:border-gold resize-y"
-        />
-      </div>
+      <BilingualField
+        label="Descripción"
+        esValue={descEs}
+        enValue={descEn}
+        onEsChange={setDescEs}
+        onEnChange={setDescEn}
+        textarea
+      />
 
       <div>
         <label className="block text-sm text-charcoal-light mb-2">Fotos</label>

@@ -5,13 +5,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { formatPrice } from "@/lib/constants";
 
+function pickTitle(title) {
+  return title?.es ?? title ?? "";
+}
+
 export default function PropertyList({ initialProperties }) {
   const router = useRouter();
   const [properties, setProperties] = useState(initialProperties);
   const [deletingId, setDeletingId] = useState(null);
 
   async function handleDelete(id, title) {
-    if (!confirm(`¿Eliminar "${title}"? Esta acción no se puede deshacer.`)) return;
+    if (!confirm(`¿Eliminar "${pickTitle(title)}"? Esta acción no se puede deshacer.`)) return;
 
     setDeletingId(id);
     const res = await fetch(`/api/admin/properties/${id}`, { method: "DELETE" });
@@ -44,7 +48,7 @@ export default function PropertyList({ initialProperties }) {
           />
 
           <div className="flex-1 min-w-0">
-            <p className="font-serif text-lg text-charcoal truncate">{p.title}</p>
+            <p className="font-serif text-lg text-charcoal truncate">{pickTitle(p.title)}</p>
             <p className="text-sm text-charcoal-light">
               {p.zone} · {p.type === "venta" ? "Venta" : "Renta"} ·{" "}
               {formatPrice(p.price, p.currency)}
@@ -66,7 +70,7 @@ export default function PropertyList({ initialProperties }) {
               Editar
             </Link>
             <button
-              onClick={() => handleDelete(p.id, p.title)}
+              onClick={() => handleDelete(p.id, pickTitle(p.title))}
               disabled={deletingId === p.id}
               className="text-xs tracking-wide uppercase text-red-600 hover:text-red-800 transition-colors disabled:opacity-50"
             >

@@ -3,7 +3,7 @@ import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 import { getDevelopments, saveDevelopments, uploadImage } from "@/lib/store";
 import { makeUniqueSlug } from "@/lib/slug";
-import { ZONE_KEYS } from "@/lib/constants";
+import { ZONE_KEYS, getZoneCurrency } from "@/lib/constants";
 
 export const runtime = "nodejs";
 
@@ -124,7 +124,7 @@ export async function POST(request) {
     status: fields.status,
     modality: fields.modality,
     priceFrom: fields.priceFrom,
-    currency: "MXN",
+    currency: getZoneCurrency(fields.zone),
     unitsCount: fields.unitsCount,
     name: fields.name,
     location: fields.location,

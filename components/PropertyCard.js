@@ -1,12 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
-import { formatPrice } from "@/lib/constants";
-import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { formatPrice, getZoneCurrency } from "@/lib/constants";
+import { useLanguage, pickLocalized } from "@/lib/i18n/LanguageContext";
 import { BedIcon, BathIcon, AreaIcon, MapPinIcon } from "@/components/icons";
 
 export default function PropertyCard({ property }) {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   const cover = property.images?.[0];
+  const title = pickLocalized(property.title, language);
+  const currency = property.currency || getZoneCurrency(property.zone);
 
   return (
     <Link
@@ -17,7 +19,7 @@ export default function PropertyCard({ property }) {
         {cover && (
           <Image
             src={cover}
-            alt={`${property.title} — ${property.type === "venta" ? "casa en venta" : "casa en renta"} en ${property.zone}`}
+            alt={`${title} — ${property.type === "venta" ? "casa en venta" : "casa en renta"} en ${property.zone}`}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-cover"
@@ -35,11 +37,11 @@ export default function PropertyCard({ property }) {
         </div>
 
         <h3 className="font-serif text-xl text-charcoal leading-snug mb-2 group-hover:text-gold-dark transition-colors duration-300">
-          {property.title}
+          {title}
         </h3>
 
         <p className="font-sans text-lg text-charcoal mb-4">
-          {formatPrice(property.price, property.currency)}
+          {formatPrice(property.price, currency)}
           {property.type === "renta" && (
             <span className="text-sm text-charcoal-light"> {t.home.properties.perMonth}</span>
           )}
